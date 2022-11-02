@@ -1,39 +1,23 @@
 package com.shashavs.trackviewer.ui.main
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
+import com.shashavs.trackviewer.R
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage() {
-    /*val items = listOf(
-        TabPage(
-            title = stringResource(id = R.string.timer),
-            icon = painterResource(id = R.drawable.ic_timer),
-            destination = Route.Dashboard
-        ),
-        TabPage(
-            title = stringResource(id = R.string.history),
-            icon = painterResource(id = R.drawable.ic_history),
-            destination = Route.History
-        ),
-        TabPage(
-            title = stringResource(id = R.string.goals),
-            icon = painterResource(id = R.drawable.ic_check_circle_outline),
-            destination = Route.Goals
-        ),
-        TabPage(
-            title = stringResource(id = R.string.reports),
-            icon = painterResource(id = R.drawable.ic_bar_chart),
-            destination = Route.Reports
-        ),
-        TabPage(
-            title = stringResource(id = R.string.more),
-            icon = painterResource(id = R.drawable.ic_more_vert),
-            destination = Route.More
-        )
-    )*/
 
     val navController = rememberNavController()
 
@@ -41,12 +25,24 @@ fun MainPage() {
         topBar = {
             TopAppBar(
                 title = {
-//                    Text(getTopBarTitle(currentTabPage.destination))    // TODO check
+                    Text(stringResource(id = R.string.app_name))
                 }
             )
         },
+        content = {
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                uiSettings = MapUiSettings(
+                    zoomControlsEnabled = false
+                ),
+                onMapLoaded = {
 
-    ) { innerPadding ->
-//        AppNavigation(navController, innerPadding)
-    }
+                },
+
+            )
+        },
+        floatingActionButton = {
+
+        },
+    )
 }
