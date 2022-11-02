@@ -1,21 +1,26 @@
 package com.shashavs.trackviewer.ui.main
 
+import android.net.Uri
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.shashavs.trackviewer.data.repositories.TrackRepository
+import com.shashavs.trackviewer.data.entities.Track
+import com.shashavs.trackviewer.domain.usecases.ParseGPX
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val trackRepository: TrackRepository
+    private val savedStateHandle: SavedStateHandle,
+    private val parseGPX: ParseGPX
 ) : ViewModel()   {
 
-    init {
-        viewModelScope.launch {
+    val tracks = mutableStateListOf<Track>()
 
-        }
+    fun addFileUri(uri: Uri) {
+        Timber.i("MainViewModel addFileUri uri: $uri")
+        parseGPX.invoke(uri)
     }
 
 }

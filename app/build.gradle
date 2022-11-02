@@ -77,9 +77,10 @@ dependencies {
     // Maps
     implementation 'com.google.maps.android:maps-compose:2.5.3'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
-
     // Logging
     implementation 'com.jakewharton.timber:timber:5.0.1'
+    // GPX parser
+    implementation 'com.github.ticofab:android-gpx-parser:2.3.0'
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
