@@ -9,4 +9,6 @@ data class Track(
     val name: String? = null,
     val points: List<LatLng> = emptyList(),
     val createdAt: Long = System.currentTimeMillis()
-)
+) {
+    fun isEmpty() = points.isEmpty()
+}

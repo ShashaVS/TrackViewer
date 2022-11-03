@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,11 +13,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,12 +38,13 @@ fun MainPage(
     val tracks = viewModel.tracksFlow.collectAsState(initial = emptyList())
     val currentTrack = viewModel.currentTrack
 
-    val openFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if(result.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
-        result.data?.data?.let {
-            viewModel.addFileUri(it)
+    val openFileLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
+            result.data?.data?.let {
+                viewModel.addFileUri(it)
+            }
         }
-    }
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
@@ -53,6 +57,11 @@ fun MainPage(
         }
         openFileLauncher.launch(intent)
     }
+
+    fun shareCurrentTrack() {
+
+    }
+
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -75,7 +84,8 @@ fun MainPage(
             ) {
                 if (currentTrack.value.points.isEmpty()) return@GoogleMap
                 val latLngBounds = currentTrack.value.getLatLngBounds()
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(latLngBounds.center, 11.0f)
+                cameraPositionState.position =
+                    CameraPosition.fromLatLngZoom(latLngBounds.center, 11.0f)
                 MapProperties(
                     latLngBoundsForCameraTarget = latLngBounds
                 )
@@ -88,36 +98,51 @@ fun MainPage(
                 )
             }
         },
-        sheetPeekHeight = 52.dp,
+        sheetPeekHeight = 48.dp,
         sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
         sheetContent = {
             Column {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        style = MaterialTheme.typography.h6,
                         text = "Tracks",
                     )
                     Spacer(modifier = Modifier.weight(1.0f))
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.Share, contentDescription = "Share track")
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete track")
+                    if(!currentTrack.value.isEmpty()) {
+                        IconButton(onClick = { shareCurrentTrack() }) {
+                            Icon(imageVector = Icons.Filled.Share, contentDescription = "Share track")
+                        }
+                        IconButton(onClick = { viewModel.deleteCurrentTrack() }) {
+                            Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete track")
+                        }
                     }
                     IconButton(onClick = { openFile() }) {
                         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add new track")
                     }
                 }
-                LazyColumn(content = {
+                Divider()
+                LazyColumn(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    content = {
                     items(tracks.value) { track ->
-                        Text(
-                            style = MaterialTheme.typography.body2,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                            text = track.name ?: "Unknown"
-                        )
+                        TextButton(onClick = { viewModel.selectTrack(track) }) {
+                            Text(
+                                style = MaterialTheme.typography.body2,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                text = track.name ?: "Unknown"
+                            )
+                            Spacer(Modifier.weight(1.0f))
+                            if(track.id == currentTrack.value.id) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    tint = Color.Blue,
+                                    contentDescription = "")
+                            }
+                        }
                     }
                 })
             }

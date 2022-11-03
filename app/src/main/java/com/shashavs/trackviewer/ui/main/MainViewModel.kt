@@ -22,7 +22,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel()   {
 
     val tracksFlow = getTracks.invoke()
-    val currentTrack = mutableStateOf(value = Track(id = ""))
+    val currentTrack = mutableStateOf(value = Track())
 
     fun addFileUri(uri: Uri) {
         viewModelScope.launch {
@@ -31,5 +31,13 @@ class MainViewModel @Inject constructor(
                 saveTrack.invoke(it)
             }
         }
+    }
+
+    fun selectTrack(track: Track) {
+        currentTrack.value = track
+    }
+
+    fun deleteCurrentTrack() {
+
     }
 }
