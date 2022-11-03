@@ -7,6 +7,6 @@ import java.util.UUID
 data class Track(
     val id: String = UUID.randomUUID().toString(),
     val name: String? = null,
-    val polyline: List<LatLng> = emptyList(),
+    val points: List<LatLng> = emptyList(),
     val createdAt: Long = System.currentTimeMillis()
 )

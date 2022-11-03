@@ -27,7 +27,7 @@ class ParseGPX @Inject constructor(
                     }
                 }
             }.toList()
-            Track(polyline = polyline, name = trackNames.toString())
+            Track(points = polyline, name = trackNames.toString())
         }.onFailure {
             Timber.e("ParseGPX error", it)
         }.getOrNull()

@@ -32,7 +32,7 @@ import com.shashavs.trackviewer.data.entities.Track
 fun MainPage(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    val tracks = viewModel.tracks
+    val tracks = viewModel.tracksFlow.collectAsState(initial = emptyList())
     val currentTrack = viewModel.currentTrack
 
     val openFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -73,18 +73,18 @@ fun MainPage(
                 onMapLoaded = {
                 },
             ) {
-                if (currentTrack.value.polyline.isEmpty()) return@GoogleMap
+                if (currentTrack.value.points.isEmpty()) return@GoogleMap
                 val latLngBounds = currentTrack.value.getLatLngBounds()
                 cameraPositionState.position = CameraPosition.fromLatLngZoom(latLngBounds.center, 11.0f)
                 MapProperties(
                     latLngBoundsForCameraTarget = latLngBounds
                 )
-                Polyline(points = currentTrack.value.polyline)
+                Polyline(points = currentTrack.value.points)
                 Marker(
-                    state = MarkerState(position = currentTrack.value.polyline.first()),
+                    state = MarkerState(position = currentTrack.value.points.first()),
                 )
                 Marker(
-                    state = MarkerState(position = currentTrack.value.polyline.last()),
+                    state = MarkerState(position = currentTrack.value.points.last()),
                 )
             }
         },
@@ -112,7 +112,7 @@ fun MainPage(
                     }
                 }
                 LazyColumn(content = {
-                    items(tracks) { track ->
+                    items(tracks.value) { track ->
                         Text(
                             style = MaterialTheme.typography.body2,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -127,7 +127,7 @@ fun MainPage(
 
 fun Track.getLatLngBounds(): LatLngBounds {
     val boundsBuilder = LatLngBounds.Builder()
-    polyline.forEach {
+    points.forEach {
         boundsBuilder.include(it)
     }
     return boundsBuilder.build()

@@ -9,8 +9,9 @@ import java.lang.System
 data class TrackEntity(
     @PrimaryKey()
     val id: String,
-    val path: String? = null,
-    val raw: String? = null,
+    val name: String? = null,
+    @ColumnInfo(name = "encoded_path")
+    val encodedPath: String? = null,
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -1,5 +1,6 @@
 package com.shashavs.trackviewer.data.repositories.impl
 
+import com.google.maps.android.PolyUtil
 import com.shashavs.trackviewer.data.entities.Track
 import com.shashavs.trackviewer.data.repositories.TrackRepository
 import com.shashavs.trackviewer.data.room.Database
@@ -34,15 +35,15 @@ class TrackRepositoryImpl @Inject constructor(
 
     private fun TrackEntity.toTrack() = Track(
         id = id,
-//        path = path,
-//        raw = raw,
+        name = name,
+        points = PolyUtil.decode(encodedPath),
         createdAt = createdAt
     )
 
     private fun Track.toTrackEntity() = TrackEntity(
         id = id,
-//        path = path,
-//        raw = raw,
+        name = name,
+        encodedPath = PolyUtil.encode(points),
         createdAt = createdAt
     )
 }
