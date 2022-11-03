@@ -37,6 +37,8 @@ class TrackRepositoryImpl @Inject constructor(
         id = id,
         name = name,
         points = PolyUtil.decode(encodedPath),
+        startTime = startTime,
+        endTime = endTime,
         createdAt = createdAt
     )
 
@@ -44,6 +46,8 @@ class TrackRepositoryImpl @Inject constructor(
         id = id,
         name = name,
         encodedPath = PolyUtil.encode(points),
+        startTime = startTime,
+        endTime = endTime,
         createdAt = createdAt
     )
 }

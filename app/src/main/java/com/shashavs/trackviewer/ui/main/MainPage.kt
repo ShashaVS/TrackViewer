@@ -143,13 +143,21 @@ fun MainPage(
                     modifier = Modifier.padding(vertical = 8.dp),
                     content = {
                     items(tracks.value) { track ->
-                        TextButton(onClick = { viewModel.selectTrack(track) }) {
-                            Text(
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                text = track.name ?: "Unknown"
-                            )
+                        TextButton(
+                            onClick = { viewModel.selectTrack(track) }
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(start = 16.dp),
+                            ) {
+                                Text(
+                                    style = MaterialTheme.typography.body2,
+                                    text = track.name ?: "Unknown"
+                                )
+                                Text(
+                                    style = MaterialTheme.typography.caption,
+                                    text = "${track.startTime?.toString("h:mm a")} - ${track.endTime?.toString("h:mm a")}"
+                                )
+                            }
                             Spacer(Modifier.weight(1.0f))
                             if(track.id == currentTrack.value.id) {
                                 Icon(
