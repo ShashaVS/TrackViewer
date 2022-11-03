@@ -80,6 +80,12 @@ fun MainPage(
                     latLngBoundsForCameraTarget = latLngBounds
                 )
                 Polyline(points = currentTrack.value.polyline)
+                Marker(
+                    state = MarkerState(position = currentTrack.value.polyline.first()),
+                )
+                Marker(
+                    state = MarkerState(position = currentTrack.value.polyline.last()),
+                )
             }
         },
         sheetPeekHeight = 52.dp,
