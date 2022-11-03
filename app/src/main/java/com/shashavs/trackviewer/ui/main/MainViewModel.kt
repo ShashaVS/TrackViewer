@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shashavs.trackviewer.data.entities.Track
+import com.shashavs.trackviewer.domain.usecases.DeleteTrack
 import com.shashavs.trackviewer.domain.usecases.GetTracks
 import com.shashavs.trackviewer.domain.usecases.ParseGPX
 import com.shashavs.trackviewer.domain.usecases.SaveTrack
@@ -18,7 +19,8 @@ class MainViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val parseGPX: ParseGPX,
     private val saveTrack: SaveTrack,
-    private val getTracks: GetTracks
+    private val getTracks: GetTracks,
+    private val deleteTrack: DeleteTrack
 ) : ViewModel()   {
 
     val tracksFlow = getTracks.invoke()
@@ -34,10 +36,15 @@ class MainViewModel @Inject constructor(
     }
 
     fun selectTrack(track: Track) {
-        currentTrack.value = track
+        when(currentTrack.value.id == track.id) {
+            true -> currentTrack.value = Track()
+            false -> currentTrack.value = track
+        }
     }
 
     fun deleteCurrentTrack() {
-
+       viewModelScope.launch {
+           deleteTrack.invoke(currentTrack.value)
+       }
     }
 }
