@@ -18,6 +18,15 @@ class MainViewModel @Inject constructor(
 
     val tracks = mutableStateListOf<Track>()
 
+    init {
+        // TEST
+        for (i in 0..10) {
+            tracks.add(
+                Track(id = "$i", name = "name $i")
+            )
+        }
+    }
+
     fun addFileUri(uri: Uri) {
         Timber.i("MainViewModel addFileUri uri: $uri")
         parseGPX.invoke(uri)
