@@ -2,29 +2,34 @@ package com.shashavs.trackviewer.domain.usecases
 
 import android.content.Context
 import android.net.Uri
-import com.shashavs.trackviewer.data.repositories.TrackRepository
+import com.google.android.gms.maps.model.LatLng
+import com.shashavs.trackviewer.data.entities.Track
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ticofab.androidgpxparser.parser.GPXParser
-import io.ticofab.androidgpxparser.parser.domain.TrackPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class ParseGPX @Inject constructor(
-    @ApplicationContext private val ctx: Context,
-    private val trackRepository: TrackRepository
+    @ApplicationContext private val ctx: Context
 ) {
-    fun invoke(uri: Uri) {
-        runCatching {
+    suspend fun invoke(uri: Uri): Track? = withContext(Dispatchers.IO) {
+         runCatching {
             val inputStream = ctx.contentResolver.openInputStream(uri)
             val gpx = GPXParser().parse(inputStream)
-            gpx.tracks.first()
-                .trackSegments.first()
-                .trackPoints.forEach { point ->
-                    Timber.d("MainViewModel addFileUri gpx track point: ${point.format()}")
+            val trackNames = StringBuilder()
+            val polyline = buildList {
+                gpx.tracks.forEach { track ->
+                    trackNames.append(track.trackName)
+                    track.trackSegments.forEach { segment ->
+                        addAll(segment.trackPoints.map { LatLng(it.latitude, it.longitude) })
+                    }
                 }
-        }
+            }.toList()
+            Track(polyline = polyline, name = trackNames.toString())
+        }.onFailure {
+            Timber.e("ParseGPX error", it)
+        }.getOrNull()
     }
-
-    private fun TrackPoint.format() =
-        "name: $name, longitude: $longitude, latitude: $latitude, desc: $desc"
 }

@@ -17,14 +17,14 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.*
 import com.shashavs.trackviewer.R
+import com.shashavs.trackviewer.data.entities.Track
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -33,6 +33,8 @@ fun MainPage(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val tracks = viewModel.tracks
+    val currentTrack = viewModel.currentTrack
+
     val openFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if(result.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
         result.data?.data?.let {
@@ -42,6 +44,7 @@ fun MainPage(
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
+    val cameraPositionState = rememberCameraPositionState {}
 
     fun openFile() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -62,20 +65,22 @@ fun MainPage(
         content = {
             GoogleMap(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .apply {
-                        if(tracks.isEmpty()) {
-                            blur(30.dp,
-                                edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                        }
-                    },
+                    .fillMaxSize(),
                 uiSettings = MapUiSettings(
                     zoomControlsEnabled = false
                 ),
+                cameraPositionState = cameraPositionState,
                 onMapLoaded = {
-
                 },
-            )
+            ) {
+                if (currentTrack.value.polyline.isEmpty()) return@GoogleMap
+                val latLngBounds = currentTrack.value.getLatLngBounds()
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(latLngBounds.center, 11.0f)
+                MapProperties(
+                    latLngBoundsForCameraTarget = latLngBounds
+                )
+                Polyline(points = currentTrack.value.polyline)
+            }
         },
         sheetPeekHeight = 52.dp,
         sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
@@ -87,7 +92,7 @@ fun MainPage(
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         style = MaterialTheme.typography.body1,
-                        text = "Track name",
+                        text = "Tracks",
                     )
                     Spacer(modifier = Modifier.weight(1.0f))
                     IconButton(onClick = { /*TODO*/ }) {
@@ -112,4 +117,12 @@ fun MainPage(
             }
         }
     )
+}
+
+fun Track.getLatLngBounds(): LatLngBounds {
+    val boundsBuilder = LatLngBounds.Builder()
+    polyline.forEach {
+        boundsBuilder.include(it)
+    }
+    return boundsBuilder.build()
 }

@@ -1,11 +1,12 @@
 package com.shashavs.trackviewer.data.entities
 
+import com.google.android.gms.maps.model.LatLng
 import java.lang.System
+import java.util.UUID
 
 data class Track(
-    val id: String,
+    val id: String = UUID.randomUUID().toString(),
     val name: String? = null,
-    val path: String? = null,
-    val raw: String? = null,
+    val polyline: List<LatLng> = emptyList(),
     val createdAt: Long = System.currentTimeMillis()
 )

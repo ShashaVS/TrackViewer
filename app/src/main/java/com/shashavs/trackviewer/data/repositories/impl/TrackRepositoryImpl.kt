@@ -34,15 +34,15 @@ class TrackRepositoryImpl @Inject constructor(
 
     private fun TrackEntity.toTrack() = Track(
         id = id,
-        path = path,
-        raw = raw,
+//        path = path,
+//        raw = raw,
         createdAt = createdAt
     )
 
     private fun Track.toTrackEntity() = TrackEntity(
         id = id,
-        path = path,
-        raw = raw,
+//        path = path,
+//        raw = raw,
         createdAt = createdAt
     )
 }
