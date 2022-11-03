@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.*
 import com.shashavs.trackviewer.R
 import com.shashavs.trackviewer.data.entities.Track
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -45,6 +46,8 @@ fun MainPage(
                 viewModel.addFileUri(it)
             }
         }
+
+    val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
@@ -60,6 +63,13 @@ fun MainPage(
 
     fun shareCurrentTrack() {
 
+    }
+
+    suspend fun bottomSheetClick() {
+        when(scaffoldState.bottomSheetState.isCollapsed) {
+            true -> scaffoldState.bottomSheetState.expand()
+            false -> scaffoldState.bottomSheetState.collapse()
+        }
     }
 
     BottomSheetScaffold(
@@ -103,6 +113,11 @@ fun MainPage(
         sheetContent = {
             Column {
                 Row(
+                    modifier = Modifier.clickable {
+                        coroutineScope.launch {
+                            bottomSheetClick()
+                        }
+                    },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
