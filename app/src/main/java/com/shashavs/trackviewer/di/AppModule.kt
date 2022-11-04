@@ -27,7 +27,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCategoryRepository(impl: TrackRepositoryImpl): TrackRepository = impl
+    fun provideTrackRepository(impl: TrackRepositoryImpl): TrackRepository = impl
 
     @Provides
     @Singleton
