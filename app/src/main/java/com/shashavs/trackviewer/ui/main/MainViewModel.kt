@@ -6,10 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shashavs.trackviewer.data.entities.Track
-import com.shashavs.trackviewer.domain.usecases.DeleteTrack
-import com.shashavs.trackviewer.domain.usecases.GetTracks
-import com.shashavs.trackviewer.domain.usecases.ParseGPX
-import com.shashavs.trackviewer.domain.usecases.SaveTrack
+import com.shashavs.trackviewer.domain.usecases.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,8 +17,9 @@ class MainViewModel @Inject constructor(
     private val parseGPX: ParseGPX,
     private val saveTrack: SaveTrack,
     private val getTracks: GetTracks,
-    private val deleteTrack: DeleteTrack
-) : ViewModel()   {
+    private val deleteTrack: DeleteTrack,
+    private val getShareLink: GetShareLink
+) : ViewModel() {
 
     val tracksFlow = getTracks.invoke()
     val currentTrack = mutableStateOf(value = Track())
@@ -46,5 +44,9 @@ class MainViewModel @Inject constructor(
        viewModelScope.launch {
            deleteTrack.invoke(currentTrack.value)
        }
+    }
+
+    fun getShareLink(): String {
+        return getShareLink.invoke(currentTrack.value)
     }
 }

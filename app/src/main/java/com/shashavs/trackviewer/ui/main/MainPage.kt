@@ -29,6 +29,7 @@ import com.google.maps.android.compose.*
 import com.shashavs.trackviewer.R
 import com.shashavs.trackviewer.data.entities.Track
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -47,6 +48,11 @@ fun MainPage(
             }
         }
 
+    val shareLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Timber.d("MainPage shareLauncher result: $result")
+        }
+
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -61,12 +67,18 @@ fun MainPage(
         openFileLauncher.launch(intent)
     }
 
-    fun shareCurrentTrack() {
-
+    fun shareCurrentTrack(link: String) {
+        val share = Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/*"
+            putExtra(Intent.EXTRA_TEXT, link)
+            putExtra(Intent.EXTRA_TITLE, currentTrack.value.name)
+        }, "Share track with")
+        shareLauncher.launch(share)
     }
 
     suspend fun bottomSheetClick() {
-        when(scaffoldState.bottomSheetState.isCollapsed) {
+        when (scaffoldState.bottomSheetState.isCollapsed) {
             true -> scaffoldState.bottomSheetState.expand()
             false -> scaffoldState.bottomSheetState.collapse()
         }
@@ -126,12 +138,23 @@ fun MainPage(
                         text = "Tracks",
                     )
                     Spacer(modifier = Modifier.weight(1.0f))
-                    if(!currentTrack.value.isEmpty()) {
-                        IconButton(onClick = { shareCurrentTrack() }) {
-                            Icon(imageVector = Icons.Filled.Share, contentDescription = "Share track")
+                    if (!currentTrack.value.isEmpty()) {
+                        IconButton(
+                            onClick = {
+                                val link = viewModel.getShareLink()
+                                shareCurrentTrack(link)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Share,
+                                contentDescription = "Share track"
+                            )
                         }
                         IconButton(onClick = { viewModel.deleteCurrentTrack() }) {
-                            Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete track")
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Delete track"
+                            )
                         }
                     }
                     IconButton(onClick = { openFile() }) {
@@ -142,32 +165,37 @@ fun MainPage(
                 LazyColumn(
                     modifier = Modifier.padding(vertical = 8.dp),
                     content = {
-                    items(tracks.value) { track ->
-                        TextButton(
-                            onClick = { viewModel.selectTrack(track) }
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(start = 16.dp),
+                        items(tracks.value) { track ->
+                            TextButton(
+                                onClick = { viewModel.selectTrack(track) }
                             ) {
-                                Text(
-                                    style = MaterialTheme.typography.body2,
-                                    text = track.name ?: "Unknown"
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.caption,
-                                    text = "${track.startTime?.toString("h:mm a")} - ${track.endTime?.toString("h:mm a")}"
-                                )
-                            }
-                            Spacer(Modifier.weight(1.0f))
-                            if(track.id == currentTrack.value.id) {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    tint = Color.Blue,
-                                    contentDescription = "")
+                                Column(
+                                    modifier = Modifier.padding(start = 16.dp),
+                                ) {
+                                    Text(
+                                        style = MaterialTheme.typography.body2,
+                                        text = track.name ?: "Unknown"
+                                    )
+                                    Text(
+                                        style = MaterialTheme.typography.caption,
+                                        text = "${track.startTime?.toString("h:mm a")} - ${
+                                            track.endTime?.toString(
+                                                "h:mm a"
+                                            )
+                                        }"
+                                    )
+                                }
+                                Spacer(Modifier.weight(1.0f))
+                                if (track.id == currentTrack.value.id) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        tint = Color.Blue,
+                                        contentDescription = ""
+                                    )
+                                }
                             }
                         }
-                    }
-                })
+                    })
             }
         }
     )
