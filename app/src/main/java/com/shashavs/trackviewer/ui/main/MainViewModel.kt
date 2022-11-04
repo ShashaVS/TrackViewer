@@ -23,6 +23,7 @@ class MainViewModel @Inject constructor(
 
     val tracksFlow = getTracks.invoke()
     val currentTrack = mutableStateOf(value = Track())
+    val darkTheme = mutableStateOf(value = true)
 
     fun addFileUri(uri: Uri) {
         viewModelScope.launch {
@@ -50,4 +51,12 @@ class MainViewModel @Inject constructor(
     fun getShareLink(): String {
         return getShareLink.invoke(currentTrack.value)
     }
+
+    fun changeDayNightMode() {
+        when(darkTheme.value) {
+            true -> darkTheme.value = false
+            false -> darkTheme.value = true
+        }
+    }
+
 }

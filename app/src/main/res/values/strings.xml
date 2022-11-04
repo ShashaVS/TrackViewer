@@ -5,4 +5,6 @@
     <string name="delete_track">Delete track</string>
     <string name="add_new_track">Add new track</string>
     <string name="unknown">Unknown</string>
+    <string name="share_track_with">Share track with</string>
+    <string name="change_day_night_mode">change Day Night mode</string>
 </resources>

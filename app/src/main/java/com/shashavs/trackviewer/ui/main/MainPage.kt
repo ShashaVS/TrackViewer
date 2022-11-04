@@ -12,10 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +38,7 @@ fun MainPage(
     val context = LocalContext.current
     val tracks = viewModel.tracksFlow.collectAsState(initial = emptyList())
     val currentTrack = viewModel.currentTrack
+    val darkTheme = viewModel.darkTheme
 
     val openFileLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -75,7 +73,7 @@ fun MainPage(
             type = "text/*"
             putExtra(Intent.EXTRA_TEXT, link)
             putExtra(Intent.EXTRA_TITLE, currentTrack.value.name)
-        }, "Share track with")
+        }, context.getString(R.string.share_track_with))
         shareLauncher.launch(share)
     }
 
@@ -92,10 +90,23 @@ fun MainPage(
             TopAppBar(
                 backgroundColor = MaterialTheme.colors.background,
                 title = {
-                    Text(
-                        style = MaterialTheme.typography.h5,
-                        text = stringResource(id = R.string.app_name)
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            style = MaterialTheme.typography.h5,
+                            text = stringResource(id = R.string.app_name)
+                        )
+                        Spacer(modifier = Modifier.weight(1.0f))
+                        IconButton(onClick = {
+                            viewModel.changeDayNightMode()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.WbSunny,
+                                contentDescription = stringResource(id = R.string.change_day_night_mode)
+                            )
+                        }
+                    }
                 }
             )
         },
@@ -109,7 +120,8 @@ fun MainPage(
                 cameraPositionState = cameraPositionState,
                 properties = MapProperties(
                     mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
-                        context, R.raw.map_style_dark)
+                        context, if(darkTheme.value) R.raw.map_style_dark else R.raw.map_style_light
+                    )
                 ),
                 onMapLoaded = {
                 },

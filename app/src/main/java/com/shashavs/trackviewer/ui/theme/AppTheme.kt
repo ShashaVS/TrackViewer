@@ -14,8 +14,7 @@ import com.shashavs.trackviewer.R
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = true,
-//    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
 
