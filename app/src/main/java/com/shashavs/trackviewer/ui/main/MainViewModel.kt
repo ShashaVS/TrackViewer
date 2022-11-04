@@ -14,9 +14,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val getTracks: GetTracks,
     private val parseGPX: ParseGPX,
     private val saveTrack: SaveTrack,
-    private val getTracks: GetTracks,
     private val deleteTrack: DeleteTrack,
     private val getShareLink: GetShareLink
 ) : ViewModel() {
@@ -43,6 +43,7 @@ class MainViewModel @Inject constructor(
     fun deleteCurrentTrack() {
        viewModelScope.launch {
            deleteTrack.invoke(currentTrack.value)
+           currentTrack.value = Track()
        }
     }
 

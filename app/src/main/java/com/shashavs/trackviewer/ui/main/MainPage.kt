@@ -2,16 +2,9 @@ package com.shashavs.trackviewer.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,22 +19,14 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
 import com.shashavs.trackviewer.R
-import com.shashavs.trackviewer.data.entities.Track
 import com.shashavs.trackviewer.ui.getLatLngBounds
 import com.shashavs.trackviewer.ui.markerIcon
 import kotlinx.coroutines.launch
@@ -53,6 +38,7 @@ import timber.log.Timber
 fun MainPage(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val tracks = viewModel.tracksFlow.collectAsState(initial = emptyList())
     val currentTrack = viewModel.currentTrack
 
@@ -121,6 +107,10 @@ fun MainPage(
                     zoomControlsEnabled = false
                 ),
                 cameraPositionState = cameraPositionState,
+                properties = MapProperties(
+                    mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+                        context, R.raw.map_style_dark)
+                ),
                 onMapLoaded = {
                 },
             ) {
@@ -133,15 +123,15 @@ fun MainPage(
                 )
                 Polyline(
                     points = currentTrack.value.points,
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.secondary
                 )
                 Marker(
                     state = MarkerState(position = currentTrack.value.points.first()),
-                    icon = LocalContext.current.markerIcon(R.drawable.ic_location_on, MaterialTheme.colors.error)
+                    icon = context.markerIcon(R.drawable.ic_location_on, MaterialTheme.colors.primary)
                 )
                 Marker(
                     state = MarkerState(position = currentTrack.value.points.last()),
-                    icon = LocalContext.current.markerIcon(R.drawable.ic_location_on, MaterialTheme.colors.secondary)
+                    icon = context.markerIcon(R.drawable.ic_location_on, MaterialTheme.colors.error)
                 )
             }
         },
@@ -160,7 +150,7 @@ fun MainPage(
                     Text(
                         modifier = Modifier.padding(horizontal = 20.dp),
                         style = MaterialTheme.typography.h6,
-                        text = "Tracks",
+                        text = stringResource(id = R.string.tracks),
                     )
                     Spacer(modifier = Modifier.weight(1.0f))
                     if (!currentTrack.value.isEmpty()) {
@@ -172,23 +162,25 @@ fun MainPage(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Share,
-                                contentDescription = "Share track"
+                                contentDescription = stringResource(id = R.string.share_track)
                             )
                         }
                         IconButton(onClick = { viewModel.deleteCurrentTrack() }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete track"
+                                contentDescription = stringResource(id = R.string.delete_track)
                             )
                         }
                     }
                     IconButton(onClick = { openFile() }) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = "Add new track")
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = stringResource(id = R.string.add_new_track)
+                        )
                     }
                 }
                 Divider()
                 LazyColumn(
-                    modifier = Modifier.padding(vertical = 8.dp),
                     content = {
                         items(tracks.value) { track ->
                             TextButton(
@@ -199,10 +191,12 @@ fun MainPage(
                                 ) {
                                     Text(
                                         style = MaterialTheme.typography.body2,
-                                        text = track.name ?: "Unknown"
+                                        color = MaterialTheme.colors.secondary,
+                                        text = track.name ?: stringResource(id = R.string.unknown)
                                     )
                                     Text(
                                         style = MaterialTheme.typography.caption,
+                                        color = MaterialTheme.colors.secondary,
                                         text = "${track.startTime?.toString("h:mm a")} - ${
                                             track.endTime?.toString(
                                                 "h:mm a"
@@ -214,7 +208,7 @@ fun MainPage(
                                 if (track.id == currentTrack.value.id) {
                                     Icon(
                                         imageVector = Icons.Filled.Check,
-                                        tint = Color.Blue,
+                                        tint = MaterialTheme.colors.primary,
                                         contentDescription = ""
                                     )
                                 }

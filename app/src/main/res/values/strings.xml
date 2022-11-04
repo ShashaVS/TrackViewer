@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Track Viewer</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="tracks">Tracks</string>
+    <string name="share_track">Share track</string>
+    <string name="delete_track">Delete track</string>
+    <string name="add_new_track">Add new track</string>
+    <string name="unknown">Unknown</string>
 </resources>
