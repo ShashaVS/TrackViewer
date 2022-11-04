@@ -18,12 +18,20 @@ class MainViewModel @Inject constructor(
     private val parseGPX: ParseGPX,
     private val saveTrack: SaveTrack,
     private val deleteTrack: DeleteTrack,
-    private val getShareLink: GetShareLink
+    private val getShareLink: GetShareLink,
+    private val isNightMode: IsNightMode,
+    private val setNightMode: SetNightMode
 ) : ViewModel() {
 
     val tracksFlow = getTracks.invoke()
     val currentTrack = mutableStateOf(value = Track())
     val darkTheme = mutableStateOf(value = true)
+
+    init {
+        viewModelScope.launch {
+            darkTheme.value = isNightMode.invoke()
+        }
+    }
 
     fun addFileUri(uri: Uri) {
         viewModelScope.launch {
@@ -35,17 +43,17 @@ class MainViewModel @Inject constructor(
     }
 
     fun selectTrack(track: Track) {
-        when(currentTrack.value.id == track.id) {
+        when (currentTrack.value.id == track.id) {
             true -> currentTrack.value = Track()
             false -> currentTrack.value = track
         }
     }
 
     fun deleteCurrentTrack() {
-       viewModelScope.launch {
-           deleteTrack.invoke(currentTrack.value)
-           currentTrack.value = Track()
-       }
+        viewModelScope.launch {
+            deleteTrack.invoke(currentTrack.value)
+            currentTrack.value = Track()
+        }
     }
 
     fun getShareLink(): String {
@@ -53,9 +61,12 @@ class MainViewModel @Inject constructor(
     }
 
     fun changeDayNightMode() {
-        when(darkTheme.value) {
-            true -> darkTheme.value = false
-            false -> darkTheme.value = true
+        viewModelScope.launch {
+            when (darkTheme.value) {
+                true -> darkTheme.value = false
+                false -> darkTheme.value = true
+            }
+            setNightMode.invoke(darkTheme.value)
         }
     }
 

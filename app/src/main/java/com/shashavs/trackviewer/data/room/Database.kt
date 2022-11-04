@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.shashavs.trackviewer.data.converters.Converters
+import com.shashavs.trackviewer.data.room.converters.Converters
 import com.shashavs.trackviewer.data.room.dao.TrackDao
 import com.shashavs.trackviewer.data.room.entity.TrackEntity
 import androidx.room.Database as DatabaseAnnotation

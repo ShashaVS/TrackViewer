@@ -1,4 +1,4 @@
-package com.shashavs.trackviewer.data.converters
+package com.shashavs.trackviewer.data.room.converters
 
 import androidx.room.TypeConverter
 import org.joda.time.DateTime

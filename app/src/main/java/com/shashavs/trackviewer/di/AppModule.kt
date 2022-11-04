@@ -1,6 +1,7 @@
 package com.shashavs.trackviewer.di
 
 import android.content.Context
+import com.shashavs.trackviewer.data.preferences.AppSharedPrefs
 import com.shashavs.trackviewer.data.repositories.TrackRepository
 import com.shashavs.trackviewer.data.repositories.impl.TrackRepositoryImpl
 import com.shashavs.trackviewer.data.room.Database
@@ -28,4 +29,7 @@ object AppModule {
     @Singleton
     fun provideCategoryRepository(impl: TrackRepositoryImpl): TrackRepository = impl
 
+    @Provides
+    @Singleton
+    fun provideSharedPrefs(@ApplicationContext ctx: Context): AppSharedPrefs = AppSharedPrefs(ctx)
 }
