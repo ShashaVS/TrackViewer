@@ -102,7 +102,7 @@ fun MainPage(
                             viewModel.changeDayNightMode()
                         }) {
                             Icon(
-                                imageVector = Icons.Filled.WbSunny,
+                                imageVector = if(darkTheme.value) Icons.Filled.Nightlight else Icons.Filled.WbSunny,
                                 contentDescription = stringResource(id = R.string.change_day_night_mode)
                             )
                         }
