@@ -1,7 +1,7 @@
 # Track Viewer
 
 ### Description
-The test application 'Track Viewer' is designed for GPX track viewing.
+The 'Track Viewer' application is designed for GPX track viewing.
 
 ### Features
 - Load and display GPX tracks on the map
