@@ -2,7 +2,7 @@ package com.shashavs.trackviewer.domain.usecases
 
 import android.content.Context
 import com.shashavs.trackviewer.data.entities.Track
-import com.shashavs.trackviewer.data.repositories.TrackRepository
+import com.shashavs.trackviewer.domain.repository.TrackRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

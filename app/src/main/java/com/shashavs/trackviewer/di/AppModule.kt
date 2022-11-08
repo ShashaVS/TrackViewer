@@ -2,8 +2,8 @@ package com.shashavs.trackviewer.di
 
 import android.content.Context
 import com.shashavs.trackviewer.data.preferences.AppSharedPrefs
-import com.shashavs.trackviewer.data.repositories.TrackRepository
-import com.shashavs.trackviewer.data.repositories.impl.TrackRepositoryImpl
+import com.shashavs.trackviewer.domain.repository.TrackRepository
+import com.shashavs.trackviewer.data.repository.impl.TrackRepositoryImpl
 import com.shashavs.trackviewer.data.room.Database
 import com.shashavs.trackviewer.data.room.DatabaseFactory
 import dagger.Module

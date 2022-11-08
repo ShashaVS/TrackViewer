@@ -1,4 +1,4 @@
-package com.shashavs.trackviewer.data.repositories
+package com.shashavs.trackviewer.domain.repository
 
 import com.shashavs.trackviewer.data.entities.Track
 import kotlinx.coroutines.flow.Flow

@@ -1,6 +1,6 @@
 package com.shashavs.trackviewer.domain.usecases
 
-import com.shashavs.trackviewer.data.repositories.TrackRepository
+import com.shashavs.trackviewer.domain.repository.TrackRepository
 import javax.inject.Inject
 
 class GetTracks @Inject constructor(

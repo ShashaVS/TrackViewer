@@ -1,8 +1,8 @@
-package com.shashavs.trackviewer.data.repositories.impl
+package com.shashavs.trackviewer.data.repository.impl
 
 import com.google.maps.android.PolyUtil
 import com.shashavs.trackviewer.data.entities.Track
-import com.shashavs.trackviewer.data.repositories.TrackRepository
+import com.shashavs.trackviewer.domain.repository.TrackRepository
 import com.shashavs.trackviewer.data.room.Database
 import com.shashavs.trackviewer.data.room.entity.TrackEntity
 import kotlinx.coroutines.flow.Flow
